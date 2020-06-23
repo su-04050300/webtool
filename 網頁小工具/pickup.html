@@ -15,7 +15,7 @@
 <textarea id="fileContent" cols="30" rows="15"/></textarea>
 <div id="pick_again"/></div>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>//使用sweetalert
 <script type="text/javascript">
  
 	function buttonClick(){
@@ -36,20 +36,20 @@
 	var length = element.length;
 	//alert(element);
 	//alert(num);
-	if (length==0){
+	if (length==0){//check pickup things
 		if(status){
 			swal("沒東西抽ㄚㄚㄚ!!", "請輸入待抽項目(一行一項", "warning",{button: true, dangerMode: true,})
 			}
 		else
 			alert("沒東西抽ㄚㄚㄚ!!"+"請輸入待抽項目(一行一項");		
 	}
-	else if(num>length){
+	else if(num>length){//check pickup number under pickup things
 		if(status)
 			swal("抽太多，超過拉!!", "請重新輸入個數", "warning");
 		else 
 			alert("抽太多，超過拉!!"+"請重新輸入個數");
 	}
-	else if(num=''|| num==null || num==undefined || num==false){
+	else if(num=''|| num==null || num==undefined || num==false){//check pickup number
 		if(status)
 			swal("抽多少，忘記輸入拉!!", "請重新輸入個數", "warning");
 		else 
@@ -78,7 +78,7 @@
 		//};
 		i=0;
 		var key = true;
-		while(key){
+		while(key){       //抽籤
 		index = randomNum(length);
 		console.log("index--"+index);
 			if(appered.indexOf(element[index])<0){
@@ -138,6 +138,7 @@
 	function randomNum(x){ //隨機亂數
 	return Math.floor(Math.random()*x);
 	};
+	
 	
 	function filter_array(testArray) {//清除陣列空白 null undefined
     let index = -1,
