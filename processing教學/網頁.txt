@@ -1,0 +1,2 @@
+https://yurenju.medium.com/web-midi-piano-visualize-ca321e9fed88
+使用processing在螢幕顯示鍵盤接收midi訊號

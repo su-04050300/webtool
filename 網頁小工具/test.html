@@ -1,0 +1,22 @@
+<html><body>
+<form name='form' id='form'>
+  姓名：
+  <input type='text' name='name' id='name' /> E-mail：
+  <input type='text' name='email' id='email' />
+  <input type='button' name='submit' value='送出' onclick='buttonClick()' />
+</form>
+<div id="fileContent"/></div>
+
+<script type="text/javascript">
+function buttonClick(){
+	const nameElement = document.getElementById("name");
+	const name = nameElement.value;
+	const emailElement = document.getElementById("email");
+	const email = emailElement.value;
+	alert("你的姓名是 " + name + "\n電子郵件是 " + email);
+	
+	result="<h1>你的姓名是 " + name + "\n電子郵件是 " + email+"</h1>";
+	document.getElementById("fileContent").innerHTML = result;
+	}
+</script>
+</body></html>

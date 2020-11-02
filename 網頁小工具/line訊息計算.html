@@ -1,0 +1,150 @@
+<!DOCTYPEhtml>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<title>LINE訊息計算</title>
+</head>
+<body>
+	<div>步驟一：至手機取得以文字檔備份的檔案（.txt）</div>
+	<div>步驟二：選擇所要計算的檔案</div>
+	<div>步驟三：按下計算</div>
+	<p><input id="myfile" type="file"/></p>
+	<p><input id="button" type="button" value="計算" onclick="clickFunction()"/></p>
+    <p>搜尋關鍵字：<input id="edit" type="text" ></p>
+	<div id="fileContent"/></div>
+	<script type="text/javascript">
+	window.onload = function () {
+    	document.getElementById('myfile').onchange = readFile;
+	};
+
+	var content = "";
+
+	function readFile() {
+	    file = this.files[0];
+	    var fReader = new FileReader();
+	           
+	    fReader.onload = function (event) {
+	        content = event.target.result;
+	        
+	    };
+	    fReader.readAsText(file);
+	}
+
+	function clickFunction() {
+        var lines = content.split("\n");
+    	var length = lines.length;
+        var remove = [];
+        var record = [];
+        var datePattern = new RegExp("^([0-9]{4})[./]{1}([0-9]{1,2})[./]{1}([0-9]{1,2})([(週]{2}).([)]{1})$");
+        var messagePattern = new RegExp("^([0-9]{1,2})[:]{1}([0-9]{1,2}).$");
+        var result = "";
+        var max = 0;
+        var maxDate = "";
+        var hour = 0;
+        var min = 0;
+        var sec = 0;
+        var key = document.getElementById('edit').value;
+        var keyman1 = "";
+        var keyman2 = "";
+        var quantity1 = 0;
+        var quantity2 = 0;
+
+        for(i = 0; i < length; i++){
+            if(!messagePattern.test(lines[i].substring(0, 5))){
+                if(!datePattern.test(lines[i].substring(0, 14))){
+                    remove.push(i);
+                }
+            }
+        }
+
+        for(i = 0; i < remove.length; i++){
+            lines.splice(remove[i] - i,1);
+        }
+
+        length = lines.length;
+        for(i = 0; i < length; i++){
+            var testlength = lines[i].split(" ")[0].split("").length;
+            var test = lines[i].split(" ")[0].substring(testlength - 4, testlength);
+            var message = lines[i].split(/(\s+)/)[4];
+            var count = lines[i].includes(key);
+
+            keyman1 = lines[1].split(/(\s+)/)[2];
+            if(keyman2 == "" && keyman1 != lines[i].split(/(\s+)/)[2]) {
+                keyman2 = lines[i].split(/(\s+)/)[2];
+            }
+
+            if(test == "通話時間"){
+                var temp = lines[i].split(" ")[1].split(":");
+                if(temp.length == 3){
+                    hour = hour + parseInt(temp[0]);
+                    min = min + parseInt(temp[1]);
+                    sec = sec + parseInt(temp[2].substring(0, 2));
+                } else if(temp.length == 2){
+                    min = min + parseInt(temp[0]);
+                    sec = sec + parseInt(temp[1].substring(0, 2));
+                }
+            }
+
+            if (datePattern.test(lines[i].substring(0, 14))) {
+                record.push(lines[i].substring(0, 14) + ":" + i);
+            }
+
+            if (key != "" && count) {
+                var quantity = getStringKeyQuantity(message, key);
+                if (lines[i].split(/(\s+)/)[2] == keyman1) {
+                    quantity1 = quantity1 + quantity;
+                } else {
+                    quantity2 = quantity2 + quantity;
+                }
+            }
+        }
+        
+        min = min + parseInt(sec / 60);
+        sec = sec % 60;
+        hour = hour + parseInt(min / 60);
+        min = min % 60;
+        
+        for (i = 0; i < record.length; i++) {
+        	var cal = 0;
+        	if(i < record.length - 1){
+        		var s = record[i];
+	            var s1 = record[i + 1];
+	            cal = s1.split(":")[1] - (s.split(":")[1]) - 1;
+	            result = result + s.split(":")[0] + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;共計&nbsp;" + cal + " 則對話訊息</br>";
+        	} else {
+        		var s = record[i];
+        		cal = length - (s.split(":")[1]) - 1;
+	            result = result + s.split(":")[0] + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;共計&nbsp;" + cal + " 則對話訊息</br>";
+        	}
+
+        	if(cal > max){
+        		maxDate = record[i].split(":")[0];
+        		max = cal;
+        	}
+    	}
+
+    	result = result + "</br>總天數</br>共計&nbsp;" + record.length + " 天</br>";
+
+    	result = result + "</br>最多訊息量</br>" + maxDate + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;共計&nbsp;" + max + " 則對話訊息</br>";
+
+    	result = result + "</br>總訊息量</br>共計&nbsp;" + (length - record.length) + " 則對話訊息</br>";
+
+        result = result + "</br>總通話時間</br>共計&nbsp;" + hour + "時" + min + "分" + sec + "秒</br>";
+
+        if(key != "") result = result + "</br>" + keyman1 + "說出" + key + "一共:" + quantity1 + "次</br>" + keyman2 + "說出" + key + "一共:" + quantity2 + "次</br>";
+    	
+    	document.getElementById("fileContent").innerHTML = result;
+	}
+
+    function getStringKeyQuantity(line, key){
+        var match = 0;
+        for (var i = 0; i < line.length - key.length + 1; i++) {
+            if (line.substring(i, i + key.length) == key) {
+                match++;
+            }
+        }
+        return match;
+    }
+</script>
+</body>
+</html>
